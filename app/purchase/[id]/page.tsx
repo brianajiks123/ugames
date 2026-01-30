@@ -124,11 +124,10 @@ export default function PurchasePage() {
                 key={nominal.id}
                 type="button"
                 onClick={() => setSelectedNominal(nominal)}
-                className={`rounded-xl border p-3 text-left transition-all ${
-                  selectedNominal?.id === nominal.id
-                    ? "border-primary bg-primary/10"
-                    : "border-border bg-secondary hover:border-primary/50"
-                }`}
+                className={`rounded-xl border p-3 text-left transition-all ${selectedNominal?.id === nominal.id
+                  ? "border-primary bg-primary/10"
+                  : "border-border bg-secondary hover:border-primary/50"
+                  }`}
               >
                 <p className="font-semibold text-foreground text-sm">{nominal.name}</p>
                 <div className="mt-1 flex items-center gap-2">
@@ -156,19 +155,16 @@ export default function PurchasePage() {
             <h2 className="font-semibold text-foreground">Pilih Pembayaran</h2>
           </div>
 
-          <p className="mb-3 text-xs text-muted-foreground">QRIS</p>
-
           <div className="space-y-2">
             {paymentMethods.map((method) => (
               <button
                 key={method.id}
                 type="button"
                 onClick={() => setSelectedPayment(method)}
-                className={`flex w-full items-center gap-3 rounded-xl border p-4 text-left transition-all ${
-                  selectedPayment?.id === method.id
-                    ? "border-primary bg-primary/10"
-                    : "border-border bg-secondary hover:border-primary/50"
-                }`}
+                className={`flex w-full items-center gap-3 rounded-xl border p-4 text-left transition-all ${selectedPayment?.id === method.id
+                  ? "border-primary bg-primary/10"
+                  : "border-border bg-secondary hover:border-primary/50"
+                  }`}
               >
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-card">
                   <CreditCard className="h-5 w-5 text-primary" />
@@ -213,11 +209,10 @@ export default function PurchasePage() {
           <Button
             onClick={handleOrder}
             disabled={!isFormValid}
-            className={`w-full h-12 font-semibold text-base transition-all ${
-              isFormValid
-                ? "bg-gradient-to-r from-primary to-accent text-white hover:opacity-90"
-                : "bg-muted text-muted-foreground cursor-not-allowed"
-            }`}
+            className={`w-full h-12 font-semibold text-base transition-all ${isFormValid
+              ? "bg-gradient-to-r from-primary to-accent text-white hover:opacity-90"
+              : "bg-muted text-muted-foreground cursor-not-allowed"
+              }`}
           >
             {isFormValid
               ? `Bayar Rp ${formatPrice(selectedNominal?.price || 0)}`
