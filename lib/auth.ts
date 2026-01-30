@@ -40,11 +40,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     .update(botToken)
                     .digest();
 
-                type CredentialKey = keyof typeof credentials;
-                const dataCheckString = (Object.keys(credentials) as CredentialKey[])
-                    .filter((key) => key !== "hash" && credentials[key])
+                // Define which keys to include in the check string
+                const telegramKeys = ["auth_date", "first_name", "id", "last_name", "photo_url", "username"];
+
+                const dataCheckString = Object.keys(credentials)
+                    .filter((key) => telegramKeys.includes(key) && credentials[key as keyof typeof credentials])
                     .sort()
-                    .map((key) => `${key}=${credentials[key]}`)
+                    .map((key) => `${key}=${credentials[key as keyof typeof credentials]}`)
                     .join("\n");
 
                 const hmac = crypto
@@ -54,6 +56,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
                 if (hmac !== credentials.hash) {
                     console.error("Telegram auth hash verification failed");
+                    console.log("Check string was:", dataCheckString);
                     return null;
                 }
 

@@ -9,7 +9,7 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'UGames - Top Up Game Mudah & Cepat',
+  title: 'UTD Games - Top Up Game Mudah & Cepat',
   description: 'Top up game favorit kamu dengan mudah, cepat, dan harga terjangkau. Mobile Legends, Free Fire, PUBG, Genshin Impact, dan banyak lagi.',
   generator: 'v0.app',
   icons: {

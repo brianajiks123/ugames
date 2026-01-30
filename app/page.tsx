@@ -26,7 +26,7 @@ export default function HomePage() {
       <footer className="border-t border-border py-6">
         <div className="container mx-auto px-4 text-center">
           <p className="text-sm text-muted-foreground">
-            2026 UGames. All rights reserved.
+            2026 UTD Games. All rights reserved.
           </p>
         </div>
       </footer>

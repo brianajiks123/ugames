@@ -4,6 +4,7 @@ import { X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
 import { useState, useEffect, useCallback } from "react";
+import { TelegramLoginButton } from "./telegram-login-button";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -85,57 +86,6 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
     }
   };
 
-  const handleTelegramClick = () => {
-    const botId = process.env.NEXT_PUBLIC_TELEGRAM_BOT_ID;
-
-    if (!botId) {
-      setError("Telegram belum dikonfigurasi (Bot ID missing).");
-      return;
-    }
-
-    // Open Telegram auth in popup
-    const width = 550;
-    const height = 470;
-    const left = (window.innerWidth - width) / 2;
-    const top = (window.innerHeight - height) / 2;
-
-    const authUrl = `https://oauth.telegram.org/auth?bot_id=${botId}&origin=${encodeURIComponent(window.location.origin)}&embed=1&request_access=write&return_to=${encodeURIComponent(window.location.href)}`;
-
-    const popup = window.open(
-      authUrl,
-      "telegram_auth",
-      `width=${width},height=${height},left=${left},top=${top}`
-    );
-
-    if (!popup) {
-      setError("Popup diblokir. Silakan izinkan popup untuk login.");
-      return;
-    }
-
-    setIsTelegramLoading(true);
-
-    // Listen for message from popup
-    const handleMessage = async (event: MessageEvent) => {
-      if (event.origin === "https://oauth.telegram.org") {
-        const user = event.data as TelegramUser;
-        if (user && user.id) {
-          await handleTelegramAuth(user);
-        }
-        popup.close();
-      }
-    };
-
-    window.addEventListener("message", handleMessage);
-
-    // Check if popup closed
-    const checkPopup = setInterval(() => {
-      if (popup.closed) {
-        clearInterval(checkPopup);
-        window.removeEventListener("message", handleMessage);
-        setIsTelegramLoading(false);
-      }
-    }, 500);
-  };
 
   if (!isOpen) return null;
 
@@ -205,21 +155,12 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
               <span className="text-foreground">Login dengan Google</span>
             </Button>
 
-            <Button
-              variant="outline"
-              className="w-full h-12 justify-start gap-3 border-border bg-secondary hover:bg-secondary/80"
-              onClick={handleTelegramClick}
-              disabled={isGoogleLoading || isTelegramLoading}
-            >
-              {isTelegramLoading ? (
-                <Loader2 className="h-5 w-5 animate-spin" />
-              ) : (
-                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="#0088cc">
-                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.057-.692-1.654-1.124-2.68-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.009-1.252-.242-1.865-.44-.751-.245-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635.099-.002.321.023.465.141.12.099.153.231.168.326.015.095.034.311.019.477z" />
-                </svg>
-              )}
-              <span className="text-foreground">Login dengan Telegram</span>
-            </Button>
+            <TelegramLoginButton
+              botName={process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || ""}
+              onAuth={handleTelegramAuth}
+              buttonSize="large"
+              cornerRadius={12}
+            />
           </div>
 
           <p className="mt-6 text-center text-xs text-muted-foreground">
