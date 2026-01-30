@@ -86,10 +86,10 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
   };
 
   const handleTelegramClick = () => {
-    const botUsername = process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME;
+    const botId = process.env.NEXT_PUBLIC_TELEGRAM_BOT_ID;
 
-    if (!botUsername) {
-      setError("Telegram belum dikonfigurasi.");
+    if (!botId) {
+      setError("Telegram belum dikonfigurasi (Bot ID missing).");
       return;
     }
 
@@ -99,7 +99,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
     const left = (window.innerWidth - width) / 2;
     const top = (window.innerHeight - height) / 2;
 
-    const authUrl = `https://oauth.telegram.org/auth?bot_id=${botUsername}&origin=${encodeURIComponent(window.location.origin)}&embed=1&request_access=write&return_to=${encodeURIComponent(window.location.href)}`;
+    const authUrl = `https://oauth.telegram.org/auth?bot_id=${botId}&origin=${encodeURIComponent(window.location.origin)}&embed=1&request_access=write&return_to=${encodeURIComponent(window.location.href)}`;
 
     const popup = window.open(
       authUrl,
