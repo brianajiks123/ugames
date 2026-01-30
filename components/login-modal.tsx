@@ -71,7 +71,14 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
       window.TelegramLoginWidget = {
         dataOnauth: handleTelegramAuth,
       };
+
+      // Prevent scrolling on background
+      document.body.style.overflow = "hidden";
     }
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
   }, [isOpen, handleTelegramAuth]);
 
   const handleGoogleLogin = async () => {
@@ -123,10 +130,10 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
             </div>
           )}
 
-          <div className="space-y-3">
+          <div className="flex flex-col items-center gap-4">
             <Button
               variant="outline"
-              className="w-full h-12 justify-start gap-3 border-border bg-secondary hover:bg-secondary/80"
+              className="w-[250px] h-12 justify-center gap-3 border-border bg-secondary hover:bg-secondary/80"
               onClick={handleGoogleLogin}
               disabled={isGoogleLoading || isTelegramLoading}
             >
@@ -155,12 +162,14 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
               <span className="text-foreground">Login dengan Google</span>
             </Button>
 
-            <TelegramLoginButton
-              botName={process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || ""}
-              onAuth={handleTelegramAuth}
-              buttonSize="large"
-              cornerRadius={12}
-            />
+            <div className="w-[250px] flex justify-center">
+              <TelegramLoginButton
+                botName={process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || ""}
+                onAuth={handleTelegramAuth}
+                buttonSize="large"
+                cornerRadius={12}
+              />
+            </div>
           </div>
 
           <p className="mt-6 text-center text-xs text-muted-foreground">
