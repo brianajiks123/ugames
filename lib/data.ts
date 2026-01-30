@@ -244,27 +244,9 @@ export const games: Game[] = [
 export const paymentMethods: PaymentMethod[] = [
   {
     id: "qris",
-    name: "QRIS (Semua E-Wallet & Bank)",
+    name: "QRIS",
     category: "QRIS",
     icon: "/qris-icon.svg",
-  },
-  {
-    id: "gopay",
-    name: "GoPay",
-    category: "E-Wallet",
-    icon: "/gopay-icon.svg",
-  },
-  {
-    id: "ovo",
-    name: "OVO",
-    category: "E-Wallet",
-    icon: "/ovo-icon.svg",
-  },
-  {
-    id: "dana",
-    name: "DANA",
-    category: "E-Wallet",
-    icon: "/dana-icon.svg",
   },
 ];
 
