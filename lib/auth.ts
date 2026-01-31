@@ -72,7 +72,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 return {
                     id: data.id as string,
                     name: `${data.first_name || ""} ${data.last_name || ""}`.trim() || (data.username as string),
-                    image: `/api/telegram-image?id=${data.id}`,
+                    image: `/api/telegram-image?id=${data.id}&url=${encodeURIComponent((data.photo_url as string) || "")}`,
                     email: null,
                 };
 

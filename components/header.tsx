@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSession, signOut } from "next-auth/react";
 
 interface HeaderProps {
@@ -63,20 +63,17 @@ export function Header({ onLoginClick }: HeaderProps) {
                   className="flex items-center gap-2 px-2 hover:bg-secondary"
                 >
                   <Avatar className="h-7 w-7">
-                    {session.user.image ? (
-                      <img
-                        src={session.user.image}
-                        alt={session.user.name || "User"}
-                        referrerPolicy="no-referrer"
-                        className="aspect-square size-full object-cover"
-                      />
-                    ) : (
-                      <AvatarFallback className="text-xs bg-primary text-primary-foreground">
-                        {session.user.name
-                          ? getInitials(session.user.name)
-                          : "U"}
-                      </AvatarFallback>
-                    )}
+                    <AvatarImage
+                      src={session.user.image || ""}
+                      alt={session.user.name || "User"}
+                      referrerPolicy="no-referrer"
+                      className="aspect-square size-full object-cover"
+                    />
+                    <AvatarFallback className="text-xs bg-primary text-primary-foreground">
+                      {session.user.name
+                        ? getInitials(session.user.name)
+                        : "U"}
+                    </AvatarFallback>
                   </Avatar>
                   <span className="hidden text-sm font-medium text-foreground sm:inline max-w-[120px] truncate">
                     {session.user.name || "User"}
