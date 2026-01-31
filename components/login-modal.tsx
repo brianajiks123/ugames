@@ -164,7 +164,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
             <div className="w-[250px] flex justify-center">
               <TelegramLoginButton
                 key={isOpen ? "open" : "closed"}
-                botName={process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || ""}
+                botId={process.env.NEXT_PUBLIC_TELEGRAM_BOT_ID || ""}
                 onAuth={handleTelegramAuth}
               />
             </div>

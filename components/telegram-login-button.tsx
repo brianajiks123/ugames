@@ -6,7 +6,7 @@ import { TelegramUser } from "@/lib/telegram";
 import { Loader2 } from "lucide-react";
 
 interface TelegramLoginButtonProps {
-    botName: string;
+    botId: string;
     onAuth: (user: TelegramUser) => void;
 }
 
@@ -21,7 +21,7 @@ declare global {
 }
 
 export function TelegramLoginButton({
-    botName,
+    botId,
     onAuth,
 }: TelegramLoginButtonProps) {
     const [isLoaded, setIsLoaded] = useState(false);
@@ -45,7 +45,7 @@ export function TelegramLoginButton({
 
         setIsLoading(true);
         window.Telegram.Login.auth(
-            { bot_id: botName, request_access: "write" },
+            { bot_id: botId, request_access: "write" },
             (user) => {
                 setIsLoading(false);
                 if (user) {
