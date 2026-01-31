@@ -35,45 +35,52 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     return null;
                 }
 
+                const { hash, ...data } = credentials;
+
+                // Sort keys and build data check string
+                // Only include keys that are part of the Telegram auth data
+                const telegramFields = ["id", "first_name", "last_name", "username", "photo_url", "auth_date"];
+                const dataCheckArr = Object.keys(data)
+                    .filter(key => telegramFields.includes(key) && data[key as keyof typeof data])
+                    .sort()
+                    .map(key => `${key}=${data[key as keyof typeof data]}`);
+                
+                const dataCheckString = dataCheckArr.join("\n");
+
+                // For Telegram Login Widget, secret key is SHA256 of bot token
                 const secretKey = crypto
                     .createHash("sha256")
                     .update(botToken)
                     .digest();
-
-                // Define which keys to include in the check string
-                const telegramKeys = ["auth_date", "first_name", "id", "last_name", "photo_url", "username"];
-
-                const dataCheckString = Object.keys(credentials)
-                    .filter((key) => telegramKeys.includes(key) && credentials[key as keyof typeof credentials])
-                    .sort()
-                    .map((key) => `${key}=${credentials[key as keyof typeof credentials]}`)
-                    .join("\n");
 
                 const hmac = crypto
                     .createHmac("sha256", secretKey)
                     .update(dataCheckString)
                     .digest("hex");
 
-                if (hmac !== credentials.hash) {
+                if (hmac !== hash) {
                     console.error("Telegram auth hash verification failed");
-                    console.log("Check string was:", dataCheckString);
+                    console.log("Expected HMAC:", hmac);
+                    console.log("Received Hash:", hash);
+                    console.log("Data check string:", dataCheckString);
                     return null;
                 }
 
-                // Check auth_date is not too old (1 hour max)
-                const authDate = parseInt(credentials.auth_date as string, 10);
+                // Check auth_date is not too old (24 hours max as per user suggestion or 1h)
+                const authDate = parseInt(data.auth_date as string, 10);
                 const now = Math.floor(Date.now() / 1000);
-                if (now - authDate > 3600) {
-                    console.error("Telegram auth date is too old");
+                if (now - authDate > 86400) { // 24 hours
+                    console.error("Telegram auth session expired");
                     return null;
                 }
 
                 return {
-                    id: credentials.id as string,
-                    name: `${credentials.first_name || ""} ${credentials.last_name || ""}`.trim() || credentials.username as string,
-                    image: credentials.photo_url as string,
+                    id: data.id as string,
+                    name: `${data.first_name || ""} ${data.last_name || ""}`.trim() || (data.username as string),
+                    image: data.photo_url as string,
                     email: null,
                 };
+
             },
         }),
     ],

@@ -1,16 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-
-interface TelegramUser {
-    id: number;
-    first_name: string;
-    last_name?: string;
-    username?: string;
-    photo_url?: string;
-    auth_date: number;
-    hash: string;
-}
+import { TelegramUser } from "@/lib/telegram";
 
 interface TelegramLoginButtonProps {
     botName: string;
@@ -21,11 +12,6 @@ interface TelegramLoginButtonProps {
     usePic?: boolean;
 }
 
-declare global {
-    interface Window {
-        onTelegramAuth: (user: TelegramUser) => void;
-    }
-}
 
 export function TelegramLoginButton({
     botName,
