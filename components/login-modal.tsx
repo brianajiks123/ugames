@@ -72,7 +72,6 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
         dataOnauth: handleTelegramAuth,
       };
 
-      // Prevent scrolling on background
       document.body.style.overflow = "hidden";
     }
 

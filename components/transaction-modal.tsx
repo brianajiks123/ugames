@@ -31,7 +31,6 @@ export function TransactionModal({
   const [showScrollHint, setShowScrollHint] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // Hide body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -43,7 +42,6 @@ export function TransactionModal({
     };
   }, [isOpen]);
 
-  // Check if content is scrollable and handle scroll hint (show when NOT at bottom)
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
@@ -72,9 +70,9 @@ export function TransactionModal({
   };
 
   const scrollToBottom = () => {
-    scrollContainerRef.current?.scrollTo({ 
-      top: scrollContainerRef.current.scrollHeight, 
-      behavior: "smooth" 
+    scrollContainerRef.current?.scrollTo({
+      top: scrollContainerRef.current.scrollHeight,
+      behavior: "smooth"
     });
   };
 
@@ -88,7 +86,7 @@ export function TransactionModal({
         tabIndex={0}
         aria-label="Close modal"
       />
-      <div 
+      <div
         ref={scrollContainerRef}
         className="relative w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto scrollbar-hide animate-in fade-in zoom-in-95 duration-200"
       >
@@ -196,7 +194,7 @@ export function TransactionModal({
           <div className="sticky bottom-0 border-t border-border bg-card rounded-b-2xl">
             {/* Gradient scroll hint overlay */}
             {showScrollHint && (
-              <div 
+              <div
                 className="absolute -top-16 left-0 right-0 h-16 bg-gradient-to-t from-card via-card/80 to-transparent pointer-events-none"
                 aria-hidden="true"
               />

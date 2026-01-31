@@ -24,12 +24,10 @@ export function TelegramLoginButton({
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        // Define the global callback
         window.onTelegramAuth = (user: TelegramUser) => {
             onAuth(user);
         };
 
-        // Clean up previous attempts if any
         if (containerRef.current) {
             containerRef.current.innerHTML = "";
         }

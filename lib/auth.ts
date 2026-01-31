@@ -8,7 +8,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             clientId: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         }),
-        // Telegram provider using Credentials (custom implementation)
         Credentials({
             id: "telegram",
             name: "Telegram",
@@ -26,7 +25,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     return null;
                 }
 
-                // Verify Telegram auth hash
                 const crypto = await import("crypto");
                 const botToken = process.env.TELEGRAM_BOT_TOKEN;
 
@@ -37,17 +35,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
                 const { hash, ...data } = credentials;
 
-                // Sort keys and build data check string
-                // Only include keys that are part of the Telegram auth data
                 const telegramFields = ["id", "first_name", "last_name", "username", "photo_url", "auth_date"];
                 const dataCheckArr = Object.keys(data)
                     .filter(key => telegramFields.includes(key) && data[key as keyof typeof data])
                     .sort()
                     .map(key => `${key}=${data[key as keyof typeof data]}`);
-                
+
                 const dataCheckString = dataCheckArr.join("\n");
 
-                // For Telegram Login Widget, secret key is SHA256 of bot token
                 const secretKey = crypto
                     .createHash("sha256")
                     .update(botToken)
@@ -66,7 +61,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     return null;
                 }
 
-                // Check auth_date is not too old (24 hours max as per user suggestion or 1h)
                 const authDate = parseInt(data.auth_date as string, 10);
                 const now = Math.floor(Date.now() / 1000);
                 if (now - authDate > 86400) { // 24 hours

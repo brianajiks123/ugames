@@ -8,7 +8,6 @@ export default function LoginPage() {
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        // Define the callback function globally so the widget can find it
         window.onTelegramAuth = (user: TelegramUser) => {
             console.log("Telegram auth user:", user);
             signIn("telegram", {
@@ -18,7 +17,6 @@ export default function LoginPage() {
             });
         };
 
-        // Dynamically create and append the script to the container
         const script = document.createElement("script");
         script.src = "https://telegram.org/js/telegram-widget.js?22";
         script.setAttribute("data-telegram-login", process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || "");
@@ -32,7 +30,6 @@ export default function LoginPage() {
         }
 
         return () => {
-            // Clean up: remove the script and the global function
             if (containerRef.current) {
                 containerRef.current.innerHTML = "";
             }
@@ -52,7 +49,6 @@ export default function LoginPage() {
 
                 <div className="py-8 flex justify-center">
                     <div ref={containerRef} className="min-h-[40px] flex items-center justify-center">
-                        {/* Telegram Login Widget will be injected here */}
                         <div className="animate-pulse text-zinc-400">Loading Telegram Widget...</div>
                     </div>
                 </div>
