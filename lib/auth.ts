@@ -69,10 +69,33 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     return null;
                 }
 
+                let finalPhotoUrl = data.photo_url as string;
+
+                try {
+                    const photosResponse = await fetch(
+                        `https://api.telegram.org/bot${botToken}/getUserProfilePhotos?user_id=${data.id}&limit=1`
+                    );
+                    const photosData = await photosResponse.json();
+
+                    if (photosData.ok && photosData.result.total_count > 0) {
+                        const fileId = photosData.result.photos[0][0].file_id;
+                        const fileResponse = await fetch(
+                            `https://api.telegram.org/bot${botToken}/getFile?file_id=${fileId}`
+                        );
+                        const fileData = await fileResponse.json();
+
+                        if (fileData.ok) {
+                            finalPhotoUrl = `https://api.telegram.org/file/bot${botToken}/${fileData.result.file_path}`;
+                        }
+                    }
+                } catch (e) {
+                    console.error("Error fetching Telegram profile photo:", e);
+                }
+
                 return {
                     id: data.id as string,
                     name: `${data.first_name || ""} ${data.last_name || ""}`.trim() || (data.username as string),
-                    image: data.photo_url as string,
+                    image: finalPhotoUrl,
                     email: null,
                 };
 
