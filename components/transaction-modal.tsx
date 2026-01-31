@@ -104,7 +104,6 @@ export function TransactionModal({
           </div>
 
           <div className="p-4 space-y-4">
-            {/* Transaction ID */}
             <div className="rounded-xl border border-border bg-secondary/50 p-4">
               <p className="text-xs text-muted-foreground mb-1">ID Transaksi</p>
               <div className="flex items-center justify-between">
@@ -126,7 +125,6 @@ export function TransactionModal({
               </div>
             </div>
 
-            {/* User Info */}
             <div className="rounded-xl border border-border bg-secondary/50 p-4">
               <div className="space-y-2">
                 <div>
@@ -140,7 +138,6 @@ export function TransactionModal({
               </div>
             </div>
 
-            {/* Order Details */}
             <div className="rounded-xl border border-border bg-secondary/50 p-4">
               <h3 className="font-semibold text-foreground mb-3">Pesanan</h3>
               <div className="space-y-2 text-sm">
@@ -169,7 +166,6 @@ export function TransactionModal({
               </div>
             </div>
 
-            {/* QR Code */}
             <div className="rounded-xl border border-border bg-secondary/50 p-4">
               <h3 className="font-semibold text-foreground mb-3 text-center">
                 Scan QRIS untuk Pembayaran
@@ -192,14 +188,12 @@ export function TransactionModal({
           </div>
 
           <div className="sticky bottom-0 border-t border-border bg-card rounded-b-2xl">
-            {/* Gradient scroll hint overlay */}
             {showScrollHint && (
               <div
                 className="absolute -top-16 left-0 right-0 h-16 bg-gradient-to-t from-card via-card/80 to-transparent pointer-events-none"
                 aria-hidden="true"
               />
             )}
-            {/* Scroll indicator with chevron */}
             {showScrollHint && (
               <div className="flex justify-center py-2">
                 <button

@@ -48,7 +48,6 @@ export default function PurchasePage() {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      {/* Header */}
       <header className="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto flex h-14 max-w-3xl items-center gap-4 px-4">
           <button
@@ -77,7 +76,6 @@ export default function PurchasePage() {
       </header>
 
       <main className="container mx-auto max-w-3xl px-4 py-6 space-y-6">
-        {/* Section 1: User ID & Server ID */}
         <section className="rounded-xl border border-border bg-card p-4">
           <div className="mb-4 flex items-center gap-2">
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground">
@@ -109,7 +107,6 @@ export default function PurchasePage() {
           </div>
         </section>
 
-        {/* Section 2: Nominal */}
         <section className="rounded-xl border border-border bg-card p-4">
           <div className="mb-4 flex items-center gap-2">
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground">
@@ -146,7 +143,6 @@ export default function PurchasePage() {
           </div>
         </section>
 
-        {/* Section 3: Payment Method */}
         <section className="rounded-xl border border-border bg-card p-4">
           <div className="mb-4 flex items-center gap-2">
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground">
@@ -175,7 +171,6 @@ export default function PurchasePage() {
           </div>
         </section>
 
-        {/* Section 4: Order Details */}
         {userId && serverId && selectedNominal && (
           <section className="rounded-xl border border-border bg-card p-4 animate-in slide-in-from-bottom-4 duration-300">
             <h2 className="font-semibold text-foreground mb-3">Detail Pesanan</h2>
@@ -203,7 +198,6 @@ export default function PurchasePage() {
         )}
       </main>
 
-      {/* Fixed Bottom Button */}
       <div className="fixed bottom-0 left-0 right-0 border-t border-border bg-background/95 backdrop-blur p-4">
         <div className="container mx-auto max-w-3xl">
           <Button
@@ -221,7 +215,6 @@ export default function PurchasePage() {
         </div>
       </div>
 
-      {/* Transaction Modal */}
       <TransactionModal
         isOpen={showTransaction}
         onClose={() => setShowTransaction(false)}
