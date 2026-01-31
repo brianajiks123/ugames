@@ -1,64 +1,77 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { TelegramUser } from "@/lib/telegram";
+import { Loader2 } from "lucide-react";
 
 interface TelegramLoginButtonProps {
     botName: string;
     onAuth: (user: TelegramUser) => void;
-    buttonSize?: "large" | "medium" | "small";
-    cornerRadius?: number;
-    requestAccess?: string;
-    usePic?: boolean;
 }
 
+declare global {
+    interface Window {
+        Telegram: {
+            Login: {
+                auth: (options: any, callback: (user: TelegramUser) => void) => void;
+            };
+        };
+    }
+}
 
 export function TelegramLoginButton({
     botName,
     onAuth,
-    buttonSize = "large",
-    cornerRadius,
-    requestAccess = "write",
-    usePic = true,
 }: TelegramLoginButtonProps) {
-    const containerRef = useRef<HTMLDivElement>(null);
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        window.onTelegramAuth = (user: TelegramUser) => {
-            onAuth(user);
-        };
-
-        if (containerRef.current) {
-            containerRef.current.innerHTML = "";
+        if (window.Telegram?.Login) {
+            setIsLoaded(true);
+            return;
         }
 
         const script = document.createElement("script");
         script.src = "https://telegram.org/js/telegram-widget.js?22";
-        script.setAttribute("data-telegram-login", botName);
-        script.setAttribute("data-size", buttonSize);
-        if (cornerRadius !== undefined) {
-            script.setAttribute("data-radius", cornerRadius.toString());
-        }
-        script.setAttribute("data-request-access", requestAccess);
-        script.setAttribute("data-userpic", usePic.toString());
-        script.setAttribute("data-onauth", "onTelegramAuth(user)");
         script.async = true;
+        script.onload = () => setIsLoaded(true);
+        document.head.appendChild(script);
+    }, []);
 
-        if (containerRef.current) {
-            containerRef.current.appendChild(script);
-        }
+    const handleLogin = () => {
+        if (!window.Telegram?.Login) return;
 
-        return () => {
-            if (containerRef.current) {
-                containerRef.current.innerHTML = "";
+        setIsLoading(true);
+        window.Telegram.Login.auth(
+            { bot_id: botName, request_access: "write" },
+            (user) => {
+                setIsLoading(false);
+                if (user) {
+                    onAuth(user);
+                }
             }
-        };
-    }, [botName, onAuth, buttonSize, cornerRadius, requestAccess, usePic]);
+        );
+    };
 
     return (
-        <div
-            ref={containerRef}
-            className="flex justify-center items-center py-1 overflow-hidden min-h-[40px]"
-        />
+        <Button
+            variant="outline"
+            className="w-[250px] h-12 justify-center gap-3 border-none bg-[#24A1DE] hover:bg-[#24A1DE]/90 text-white"
+            onClick={handleLogin}
+            disabled={!isLoaded || isLoading}
+        >
+            {isLoading ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+                <>
+                    <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.11-.31-1.07-.66.02-.18.27-.36.75-.55 2.93-1.27 4.88-2.11 5.85-2.52 2.79-1.16 3.37-1.36 3.75-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .33z" />
+                    </svg>
+                    <span>Log in with Telegram</span>
+                </>
+            )}
+        </Button>
     );
 }

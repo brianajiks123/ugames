@@ -161,19 +161,12 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
               <span className="text-foreground">Login dengan Google</span>
             </Button>
 
-            <div className="w-[250px] flex justify-center overflow-hidden h-[44px]">
-              <div 
-                className="flex items-center justify-center origin-center"
-                style={{ transform: 'scale(1.15)' }}
-              >
-                <TelegramLoginButton
-                  key={isOpen ? "open" : "closed"}
-                  botName={process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || ""}
-                  onAuth={handleTelegramAuth}
-                  buttonSize="large"
-                  cornerRadius={12}
-                />
-              </div>
+            <div className="w-[250px] flex justify-center">
+              <TelegramLoginButton
+                key={isOpen ? "open" : "closed"}
+                botName={process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || ""}
+                onAuth={handleTelegramAuth}
+              />
             </div>
           </div>
 
