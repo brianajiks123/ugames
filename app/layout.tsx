@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 
 import { AuthProvider } from '@/components/auth-provider'
+import { FloatingChat } from "@/components/floating-chat"
 import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
@@ -41,6 +42,7 @@ export default function RootLayout({
       <body className={`font-sans antialiased`}>
         <AuthProvider>
           {children}
+          <FloatingChat />
         </AuthProvider>
 
       </body>

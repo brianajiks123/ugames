@@ -48,7 +48,7 @@ export function Banner() {
       >
         {banners.map((banner) => (
           <div key={banner.id} className="relative min-w-full">
-            <div className="relative aspect-[20/3] w-full overflow-hidden rounded-xl bg-gradient-to-r from-primary/20 to-accent/20">
+            <div className="relative aspect-[2/1] w-full overflow-hidden rounded-xl bg-gradient-to-r from-primary/20 to-accent/20 sm:aspect-[21/9] md:aspect-[20/6]">
               <Image
                 src={banner.image || "/placeholder.svg"}
                 alt={banner.title}

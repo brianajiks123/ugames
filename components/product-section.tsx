@@ -17,6 +17,7 @@ interface ProductSectionProps {
 
 export function ProductSection({ searchQuery }: ProductSectionProps) {
   const [activeCategory, setActiveCategory] = useState("all");
+  const [visibleCount, setVisibleCount] = useState(12);
 
   const hotProducts = useMemo(() => {
     return games.filter(
@@ -51,9 +52,17 @@ export function ProductSection({ searchQuery }: ProductSectionProps) {
     return filtered;
   }, [searchQuery, activeCategory]);
 
+  useMemo(() => {
+    setVisibleCount(12);
+  }, [activeCategory, searchQuery]);
+
   const getCategoryCount = (categoryId: string) => {
     if (categoryId === "all") return games.length;
     return games.filter((game) => game.category === categoryId).length;
+  };
+
+  const handleShowMore = () => {
+    setVisibleCount((prev) => prev + 12);
   };
 
   return (
@@ -64,7 +73,7 @@ export function ProductSection({ searchQuery }: ProductSectionProps) {
             <Flame className="h-5 w-5 text-accent" />
             <h2 className="text-lg font-bold text-foreground">Produk Hot</h2>
           </div>
-          <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {hotProducts.slice(0, 6).map((game) => (
               <GameCard key={game.id} game={game} />
             ))}
@@ -81,11 +90,10 @@ export function ProductSection({ searchQuery }: ProductSectionProps) {
                 key={category.id}
                 type="button"
                 onClick={() => setActiveCategory(category.id)}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
-                  activeCategory === category.id
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                }`}
+                className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${activeCategory === category.id
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                  }`}
               >
                 {category.label}
                 <span className="ml-1.5 text-xs opacity-70">
@@ -96,11 +104,22 @@ export function ProductSection({ searchQuery }: ProductSectionProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
-          {filteredProducts.map((game) => (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {filteredProducts.slice(0, visibleCount).map((game) => (
             <GameCard key={game.id} game={game} />
           ))}
         </div>
+
+        {filteredProducts.length > visibleCount && (
+          <div className="mt-8 flex justify-center">
+            <button
+              onClick={handleShowMore}
+              className="rounded-full bg-secondary px-6 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
+            >
+              Tampilkan Lainnya...
+            </button>
+          </div>
+        )}
 
         {filteredProducts.length === 0 && (
           <div className="py-12 text-center">

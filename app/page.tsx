@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Header } from "@/components/header";
 import { Banner } from "@/components/banner";
-import { SearchBar } from "@/components/search-bar";
 import { ProductSection } from "@/components/product-section";
 import { WhyChooseUs } from "@/components/why-choose-us";
 import { LoginModal } from "@/components/login-modal";
@@ -14,11 +13,14 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header onLoginClick={() => setIsLoginOpen(true)} />
+      <Header
+        onLoginClick={() => setIsLoginOpen(true)}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
 
       <main className="container mx-auto space-y-8 px-4 py-6">
         <Banner />
-        <SearchBar value={searchQuery} onChange={setSearchQuery} />
         <ProductSection searchQuery={searchQuery} />
         <WhyChooseUs />
       </main>
