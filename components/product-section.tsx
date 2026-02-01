@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { games } from "@/lib/data";
+import { useState, useMemo, useEffect } from "react";
+import { fetchGames, Game } from "@/lib/game-service";
 import { GameCard } from "@/components/game-card";
 import { Flame } from "lucide-react";
 
@@ -18,21 +18,26 @@ interface ProductSectionProps {
 export function ProductSection({ searchQuery }: ProductSectionProps) {
   const [activeCategory, setActiveCategory] = useState("all");
   const [visibleCount, setVisibleCount] = useState(12);
+  const [games, setGames] = useState<Game[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadGames() {
+      try {
+        const data = await fetchGames();
+        setGames(data);
+      } catch (error) {
+        console.error("Failed to load games", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadGames();
+  }, []);
 
   const hotProducts = useMemo(() => {
-    return games.filter(
-      (game) =>
-        game.isTrending ||
-        [
-          "mobile-legends",
-          "free-fire",
-          "pubg-mobile",
-          "genshin-impact",
-          "honor-of-kings",
-          "roblox",
-        ].includes(game.id)
-    );
-  }, []);
+    return games.slice(0, 6);
+  }, [games]);
 
   const filteredProducts = useMemo(() => {
     let filtered = games;
@@ -50,7 +55,7 @@ export function ProductSection({ searchQuery }: ProductSectionProps) {
     }
 
     return filtered;
-  }, [searchQuery, activeCategory]);
+  }, [searchQuery, activeCategory, games]);
 
   useMemo(() => {
     setVisibleCount(12);
@@ -65,6 +70,10 @@ export function ProductSection({ searchQuery }: ProductSectionProps) {
     setVisibleCount((prev) => prev + 12);
   };
 
+  if (loading) {
+    return <div className="py-12 text-center">Loading games...</div>;
+  }
+
   return (
     <div className="mx-auto w-full max-w-5xl space-y-8">
       {!searchQuery && (
@@ -74,8 +83,8 @@ export function ProductSection({ searchQuery }: ProductSectionProps) {
             <h2 className="text-lg font-bold text-foreground">Produk Hot</h2>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-            {hotProducts.slice(0, 6).map((game) => (
-              <GameCard key={game.id} game={game} />
+            {hotProducts.map((game, index) => (
+              <GameCard key={`${game.id}-hot-${index}`} game={game} />
             ))}
           </div>
         </section>
@@ -105,8 +114,8 @@ export function ProductSection({ searchQuery }: ProductSectionProps) {
         </div>
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {filteredProducts.slice(0, visibleCount).map((game) => (
-            <GameCard key={game.id} game={game} />
+          {filteredProducts.slice(0, visibleCount).map((game, index) => (
+            <GameCard key={`${game.id}-${index}`} game={game} />
           ))}
         </div>
 
