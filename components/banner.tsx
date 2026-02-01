@@ -53,6 +53,7 @@ export function Banner() {
                 src={banner.image || "/placeholder.svg"}
                 alt={banner.title}
                 fill
+                sizes="(max-width: 1024px) 100vw, 1024px"
                 className="object-cover opacity-30"
                 priority
               />

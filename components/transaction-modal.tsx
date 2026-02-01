@@ -177,6 +177,7 @@ export function TransactionModal({
                     alt="QR Code Payment"
                     width={180}
                     height={180}
+                    loading="lazy"
                     className="rounded-lg"
                   />
                 </div>

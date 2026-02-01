@@ -20,18 +20,17 @@ export function GameCard({ game }: GameCardProps) {
             src={imgSrc || "/operators/default.webp"}
             alt={game.name}
             fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            loading="lazy"
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             onError={() => setImgSrc("/operators/default.webp")}
           />
         </div>
 
         <div className="p-3">
-          <h3 className="text-sm font-semibold text-foreground line-clamp-1">
+          <h3 className="text-sm text-center font-semibold text-foreground line-clamp-1">
             {game.name}
           </h3>
-          <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">
-            {game.description}
-          </p>
         </div>
       </div>
     </Link>

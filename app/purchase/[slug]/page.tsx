@@ -92,6 +92,8 @@ export default function PurchasePage() {
                                 src={imgSrc || "/operators/default.webp"}
                                 alt={game.name}
                                 fill
+                                sizes="40px"
+                                priority
                                 className="object-cover"
                                 onError={() => setImgSrc("/operators/default.webp")}
                             />

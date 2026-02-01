@@ -38,7 +38,6 @@ function parseNominalDisplay(nama: string, operatorName?: string): string {
     let clean = nama.trim().replace(/\s+/g, ' ');
     if (!clean) return nama;
 
-    // Metal Slug: remove "TOP UP" text
     if (operatorName?.toUpperCase().includes('METAL SLUG')) {
         clean = clean.replace(/TOP[-\s]?UP/gi, '').trim();
     }
@@ -53,15 +52,12 @@ function parseNominalDisplay(nama: string, operatorName?: string): string {
             if (key === 'starQuartz') {
                 return `${match[1]} ${label}`;
             }
-            // Items without numeric amount (special cards, passes, etc.)
             if (['weeklyCard', 'superPass', 'superPassBundle', 'superVipCard', 'monthlyCard'].includes(key)) {
                 return label;
             }
-            // Dragon Raja: return full SEA Investment text
             if (key === 'seaInvestment') {
                 return match[1];
             }
-            // Steam IDR: format as "IDR 50.000"
             if (key === 'steamIdr') {
                 const amount = match[1].replace(/[.,]/g, '');
                 const formatted = Number(amount).toLocaleString('id-ID');
@@ -78,7 +74,6 @@ function parseNominalDisplay(nama: string, operatorName?: string): string {
 export interface Game {
     id: string;
     name: string;
-    description: string;
     image: string;
     nominals: Nominal[];
     category: "all" | "voucher" | "top-up";
