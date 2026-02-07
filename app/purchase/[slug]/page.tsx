@@ -9,6 +9,7 @@ import { formatPrice, generateTransactionId, paymentMethods } from "@/lib/data";
 import type { PaymentMethod } from "@/lib/data";
 import { fetchGames, Game, Nominal } from "@/lib/game-service";
 import { TransactionModal } from "@/components/transaction-modal";
+import { UserValidationForm } from "@/components/UserValidationForm";
 
 export default function PurchasePage() {
     const params = useParams();
@@ -18,6 +19,7 @@ export default function PurchasePage() {
     const [game, setGame] = useState<Game | null>(null);
     const [loading, setLoading] = useState(true);
     const [imgSrc, setImgSrc] = useState<string>("");
+    const [gameTitle, setGameTitle] = useState<string>("");
 
     useEffect(() => {
         async function loadGame() {
@@ -25,7 +27,20 @@ export default function PurchasePage() {
                 const games = await fetchGames();
                 const found = games.find((g) => g.id === slug);
                 setGame(found || null);
-                if (found) setImgSrc(found.image);
+                if (found) {
+                    setImgSrc(found.image);
+                    const gameIdMap: Record<string, string> = {
+                        'mobile-legends': 'MOBILELEGEND',
+                        'free-fire': 'FREEFIRE',
+                        'arena-of-valor': 'AOV',
+                        'tom-and-jerry': 'TOMANDJERRY',
+                        'call-of-duty': 'CALLOFDUTY',
+                        'lords-mobile': 'LORDSMOBILE',
+                        'marvel-super-war': 'MARVELSUPERWAR',
+                    };
+                    const mappedTitle = gameIdMap[slug] || slug.toUpperCase().replace(/-/g, '');
+                    setGameTitle(mappedTitle);
+                }
             } catch (error) {
                 console.error("Failed to load game", error);
             } finally {
@@ -35,16 +50,14 @@ export default function PurchasePage() {
         loadGame();
     }, [slug]);
 
-    const [userId, setUserId] = useState("");
-    const [serverId, setServerId] = useState("");
     const [selectedNominal, setSelectedNominal] = useState<Nominal | null>(null);
     const [selectedPayment, setSelectedPayment] = useState<PaymentMethod | null>(null);
     const [showTransaction, setShowTransaction] = useState(false);
     const [transactionId, setTransactionId] = useState("");
 
     const isFormValid = useMemo(() => {
-        return userId.trim() !== "" && serverId.trim() !== "" && selectedNominal !== null && selectedPayment !== null;
-    }, [userId, serverId, selectedNominal, selectedPayment]);
+        return selectedNominal !== null && selectedPayment !== null;
+    }, [selectedNominal, selectedPayment]);
 
     const handleOrder = () => {
         if (!isFormValid) return;
@@ -100,7 +113,6 @@ export default function PurchasePage() {
                         </div>
                         <div>
                             <h1 className="text-sm font-bold text-foreground">{game.name}</h1>
-                            <p className="text-xs text-muted-foreground">{game.description}</p>
                         </div>
                     </div>
                 </div>
@@ -112,25 +124,10 @@ export default function PurchasePage() {
                         <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground">
                             1
                         </span>
-                        <h2 className="font-semibold text-foreground">Masukkan User ID & Server ID</h2>
+                        <h2 className="font-semibold text-foreground">Validasi User ID & Server ID</h2>
                     </div>
 
-                    <div className="space-y-3">
-                        <input
-                            type="text"
-                            placeholder="User ID"
-                            value={userId}
-                            onChange={(e) => setUserId(e.target.value)}
-                            className="h-12 w-full rounded-xl border border-border bg-secondary px-4 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                        />
-                        <input
-                            type="text"
-                            placeholder="Server ID"
-                            value={serverId}
-                            onChange={(e) => setServerId(e.target.value)}
-                            className="h-12 w-full rounded-xl border border-border bg-secondary px-4 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                        />
-                    </div>
+                    {gameTitle && <UserValidationForm gameTitle={gameTitle} />}
 
                     <div className="mt-3 flex items-start gap-2 text-xs text-muted-foreground">
                         <Info className="mt-0.5 h-4 w-4 flex-shrink-0" />
@@ -206,7 +203,7 @@ export default function PurchasePage() {
                     </div>
                 </section>
 
-                {userId && serverId && selectedNominal && (
+                {selectedNominal && (
                     <section className="rounded-xl border border-border bg-card p-4 animate-in slide-in-from-bottom-4 duration-300">
                         <h2 className="font-semibold text-foreground mb-3">Detail Pesanan</h2>
                         <div className="space-y-2 text-sm">
@@ -254,8 +251,8 @@ export default function PurchasePage() {
                 isOpen={showTransaction}
                 onClose={() => setShowTransaction(false)}
                 transactionId={transactionId}
-                userId={userId}
-                serverId={serverId}
+                userId=""
+                serverId=""
                 productName={selectedNominal?.name || ""}
                 paymentMethod={selectedPayment?.name || ""}
                 price={selectedNominal?.price || 0}
