@@ -126,10 +126,13 @@ export function UserValidationForm({ gameTitle }: UserValidationFormProps) {
 
             const data = await response.json();
 
-            if (response.ok && data.status === 'success') {
+            if (response.ok && data.status === 'success' && data.message === 'Berhasil melakukan check') {
                 setValidationResponse(data);
                 setValidationError(null);
                 setFieldErrors({});
+            } else if (response.ok && data.status === 'success') {
+                setValidationError('Response tidak sesuai dengan yang diharapkan');
+                setValidationResponse(null);
             } else {
                 setValidationError(data.message || 'Validasi gagal');
                 setValidationResponse(null);
@@ -244,27 +247,9 @@ export function UserValidationForm({ gameTitle }: UserValidationFormProps) {
 
                 {validationResponse && validationResponse.status === 'success' && (
                     <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-md">
-                        <div className="flex items-start gap-2">
-                            <CheckCircle size={18} className="text-green-600 flex-shrink-0 mt-0.5" />
-                            <div className="flex-1">
-                                <p className="font-medium text-green-800 text-sm">{validationResponse.message}</p>
-                                {validationResponse.data && (
-                                    <div className="mt-2 space-y-1 text-xs text-green-700">
-                                        <p>
-                                            <strong>ID Pelanggan:</strong> {validationResponse.data.idPelanggan}
-                                        </p>
-                                        <p>
-                                            <strong>Username:</strong> {validationResponse.data.username}
-                                        </p>
-                                        <p>
-                                            <strong>ID Server:</strong> {validationResponse.data.idServer}
-                                        </p>
-                                        <p>
-                                            <strong>Game Title:</strong> {validationResponse.data.gameTitle}
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
+                        <div className="flex items-center gap-2">
+                            <CheckCircle size={18} className="text-green-600 flex-shrink-0" />
+                            <p className="font-medium text-green-800 text-sm">User & Server ID ditemukan</p>
                         </div>
                     </div>
                 )}
