@@ -10,6 +10,7 @@ import type { PaymentMethod } from "@/lib/data";
 import { fetchGames, Game, Nominal } from "@/lib/game-service";
 import { TransactionModal } from "@/components/transaction-modal";
 import { UserValidationForm } from "@/components/UserValidationForm";
+import { saveTransactionToLocalStorage } from "@/lib/transaction-storage";
 
 export default function PurchasePage() {
     const params = useParams();
@@ -54,6 +55,10 @@ export default function PurchasePage() {
     const [selectedPayment, setSelectedPayment] = useState<PaymentMethod | null>(null);
     const [showTransaction, setShowTransaction] = useState(false);
     const [transactionId, setTransactionId] = useState("");
+    const [userValidationData, setUserValidationData] = useState<{
+        idPelanggan: string;
+        idServer: string;
+    } | null>(null);
 
     const isFormValid = useMemo(() => {
         return selectedNominal !== null && selectedPayment !== null;
@@ -61,7 +66,39 @@ export default function PurchasePage() {
 
     const handleOrder = () => {
         if (!isFormValid) return;
+        if (!userValidationData) {
+            alert("Silakan validasi User ID dan Server ID terlebih dahulu");
+            return;
+        }
+
         const newTransactionId = generateTransactionId();
+
+        // Extract nominal value from product name ("5 Diamond" -> 5)
+        const nominalMatch = selectedNominal?.name.match(/(\d+)/);
+        const nominalValue = nominalMatch ? parseInt(nominalMatch[1]) : 0;
+
+        // Extract price value (remove "Rp" and formatting)
+        const priceValue = selectedNominal?.price || 0;
+
+        const constTrx = process.env.NEXT_PUBLIC_CONSTANTA_TRX || "";
+
+        try {
+            saveTransactionToLocalStorage({
+                idPelanggan: userValidationData.idPelanggan,
+                idServer: userValidationData.idServer,
+                idSv: selectedNominal?.svId || "",
+                kodeProduk: selectedNominal?.kode || "",
+                nominal: nominalValue,
+                harga: priceValue,
+                pembayaran: selectedPayment?.name || "QRIS",
+                constTrx: constTrx,
+                transactionId: newTransactionId,
+                timestamp: Date.now(),
+            });
+        } catch (error) {
+            console.error("Error saving transaction to Local Storage:", error);
+        }
+
         setTransactionId(newTransactionId);
         setShowTransaction(true);
     };
@@ -127,7 +164,7 @@ export default function PurchasePage() {
                         <h2 className="font-semibold text-foreground">Validasi User ID & Server ID</h2>
                     </div>
 
-                    {gameTitle && <UserValidationForm gameTitle={gameTitle} />}
+                    {gameTitle && <UserValidationForm gameTitle={gameTitle} onValidationSuccess={setUserValidationData} />}
 
                     <div className="mt-3 flex items-start gap-2 text-xs text-muted-foreground">
                         <Info className="mt-0.5 h-4 w-4 flex-shrink-0" />

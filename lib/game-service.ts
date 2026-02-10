@@ -4,6 +4,8 @@ export interface Nominal {
     price: number;
     originalPrice: number;
     discount: number;
+    svId: string;
+    kode: string;
 }
 
 const parseItemPatterns: Record<string, { regex: RegExp; label: string }> = {
@@ -148,6 +150,8 @@ export async function fetchGames(): Promise<Game[]> {
                     price: price,
                     originalPrice: price,
                     discount: 0,
+                    svId: p.sv_id,
+                    kode: p.kode,
                 };
             });
 

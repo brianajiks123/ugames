@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { Game } from "@/lib/game-service";
 
 interface GameCardProps {
@@ -11,9 +11,15 @@ interface GameCardProps {
 
 export function GameCard({ game }: GameCardProps) {
   const [imgSrc, setImgSrc] = useState(game.image);
+  const router = useRouter();
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    router.push(`/purchase/${game.id}`);
+  };
 
   return (
-    <Link href={`/purchase/${game.id}`} className="group block">
+    <button onClick={handleClick} className="group block w-full text-left cursor-pointer">
       <div className="relative overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10">
         <div className="relative aspect-[4/5] w-full overflow-hidden">
           <Image
@@ -34,6 +40,6 @@ export function GameCard({ game }: GameCardProps) {
           </h3>
         </div>
       </div>
-    </Link>
+    </button>
   );
 }

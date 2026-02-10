@@ -27,9 +27,10 @@ interface ValidationResponse {
 
 interface UserValidationFormProps {
     gameTitle: string;
+    onValidationSuccess?: (data: { idPelanggan: string; idServer: string }) => void;
 }
 
-export function UserValidationForm({ gameTitle }: UserValidationFormProps) {
+export function UserValidationForm({ gameTitle, onValidationSuccess }: UserValidationFormProps) {
     const [formData, setFormData] = useState<FormData>({
         idPelanggan: '',
         idServer: '',
@@ -130,6 +131,10 @@ export function UserValidationForm({ gameTitle }: UserValidationFormProps) {
                 setValidationResponse(data);
                 setValidationError(null);
                 setFieldErrors({});
+                onValidationSuccess?.({
+                    idPelanggan,
+                    idServer,
+                });
             } else if (response.ok && data.status === 'success') {
                 setValidationError('Response tidak sesuai dengan yang diharapkan');
                 setValidationResponse(null);
