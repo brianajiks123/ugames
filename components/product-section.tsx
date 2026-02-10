@@ -45,8 +45,7 @@ export function ProductSection({ searchQuery }: ProductSectionProps) {
     if (searchQuery) {
       filtered = filtered.filter(
         (game) =>
-          game.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          game.description.toLowerCase().includes(searchQuery.toLowerCase())
+          game.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 

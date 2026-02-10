@@ -25,9 +25,6 @@ export function Header({ onLoginClick, searchQuery, setSearchQuery }: HeaderProp
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
-  const whatsappLink = `https://wa.me/${whatsappNumber}`;
-
   useEffect(() => {
     if (isSearchOpen && searchInputRef.current) {
       searchInputRef.current.focus();
