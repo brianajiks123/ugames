@@ -104,9 +104,13 @@ interface ApiResponse {
 
 export async function fetchGames(): Promise<Game[]> {
     try {
-        const response = await fetch(
-            "https://portal.murapay.id/api/custom/Produk/parseProduk/voucher_game"
-        );
+        const URLGAMES = process.env.NEXT_PUBLIC_API_GAMES || '';
+
+        if (URLGAMES === '') {
+            console.error("Undefined URL API Games");
+        }
+
+        const response = await fetch(URLGAMES);
         const result: ApiResponse = await response.json();
 
         if (result.status !== 200 || !Array.isArray(result.data)) {
