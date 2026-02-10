@@ -9,6 +9,7 @@ export interface Nominal {
 }
 
 const parseItemPatterns: Record<string, { regex: RegExp; label: string }> = {
+    diamondWithBonus: { regex: /(\d{1,3}(?:\.\d{3})*|\d+)\s*DIAMOND\s*\(([^)]+)\)/i, label: 'Diamond' },
     diamondFull: { regex: /(\d{1,3}(?:\.\d{3})*|\d+)\s*DIAMOND/i, label: 'Diamond' },
     diamondShort: { regex: /(\d{1,3}(?:\.\d{3})*|\d+)D\b/i, label: 'Diamond' },
     vouchers: { regex: /(\d+)\s*VOUCHERS?/i, label: 'Voucher' },
@@ -47,6 +48,11 @@ function parseNominalDisplay(nama: string, operatorName?: string): string {
     for (const [key, { regex, label }] of Object.entries(parseItemPatterns)) {
         const match = clean.match(regex);
         if (match) {
+            if (key === 'diamondWithBonus' && match[2]) {
+                // Return full format with bonus: "28 Diamond (25 + 3 Bonus)"
+                const amount = match[1].replace(/\./g, '');
+                return `${amount} ${label} (${match[2]})`;
+            }
             if (key === 'bigCatCoins' && match[2]) {
                 const total = Number(match[1]) + Number(match[2]);
                 return `${total} ${label}`;
@@ -71,6 +77,23 @@ function parseNominalDisplay(nama: string, operatorName?: string): string {
     }
 
     return clean;
+}
+
+export function extractNominalValue(productName: string): number {
+    // Handle Diamond with bonus like "28 Diamond (25 + 3 Bonus)"
+    const diamondBonusMatch = productName.match(/(\d+)\s*DIAMOND(?:\s*\(([^)]+)\))?/i);
+    if (diamondBonusMatch) {
+        const baseAmount = Number(diamondBonusMatch[1]);
+        if (diamondBonusMatch[2]) {
+            const bonusNumbers = diamondBonusMatch[2].match(/\d+/g) || [];
+            const bonusTotal = bonusNumbers.reduce((sum, num) => sum + Number(num), 0);
+            return baseAmount + bonusTotal;
+        }
+        return baseAmount;
+    }
+
+    const match = productName.match(/(\d+)/);
+    return match ? parseInt(match[1]) : 0;
 }
 
 export interface Game {

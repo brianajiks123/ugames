@@ -28,9 +28,10 @@ interface ValidationResponse {
 interface UserValidationFormProps {
     gameTitle: string;
     onValidationSuccess?: (data: { idPelanggan: string; idServer: string }) => void;
+    onValidationStatusChange?: (status: { isValid: boolean; hasError: boolean; isEmpty: boolean }) => void;
 }
 
-export function UserValidationForm({ gameTitle, onValidationSuccess }: UserValidationFormProps) {
+export function UserValidationForm({ gameTitle, onValidationSuccess, onValidationStatusChange }: UserValidationFormProps) {
     const [formData, setFormData] = useState<FormData>({
         idPelanggan: '',
         idServer: '',
@@ -67,7 +68,10 @@ export function UserValidationForm({ gameTitle, onValidationSuccess }: UserValid
     };
 
     const checkValidation = async (idPelanggan: string, idServer: string) => {
-        if (!idPelanggan.trim() && !idServer.trim()) return;
+        if (!idPelanggan.trim() && !idServer.trim()) {
+            onValidationStatusChange?.({ isValid: false, hasError: false, isEmpty: true });
+            return;
+        }
 
         let hasError = false;
         const newErrors: FieldError = {};
@@ -87,6 +91,7 @@ export function UserValidationForm({ gameTitle, onValidationSuccess }: UserValid
         if (hasError) {
             setValidationResponse(null);
             setValidationError(null);
+            onValidationStatusChange?.({ isValid: false, hasError: true, isEmpty: false });
             return;
         }
 
@@ -100,6 +105,7 @@ export function UserValidationForm({ gameTitle, onValidationSuccess }: UserValid
             });
             setValidationResponse(null);
             setValidationError(null);
+            onValidationStatusChange?.({ isValid: false, hasError: true, isEmpty: false });
             return;
         }
 
@@ -131,6 +137,7 @@ export function UserValidationForm({ gameTitle, onValidationSuccess }: UserValid
                 setValidationResponse(data);
                 setValidationError(null);
                 setFieldErrors({});
+                onValidationStatusChange?.({ isValid: true, hasError: false, isEmpty: false });
                 onValidationSuccess?.({
                     idPelanggan,
                     idServer,
@@ -138,13 +145,16 @@ export function UserValidationForm({ gameTitle, onValidationSuccess }: UserValid
             } else if (response.ok && data.status === 'success') {
                 setValidationError('Response tidak sesuai dengan yang diharapkan');
                 setValidationResponse(null);
+                onValidationStatusChange?.({ isValid: false, hasError: true, isEmpty: false });
             } else {
                 setValidationError(data.message || 'Validasi gagal');
                 setValidationResponse(null);
+                onValidationStatusChange?.({ isValid: false, hasError: true, isEmpty: false });
             }
         } catch (error) {
             setValidationError('Gagal terhubung ke server validasi');
             setValidationResponse(null);
+            onValidationStatusChange?.({ isValid: false, hasError: true, isEmpty: false });
         } finally {
             setIsLoading(false);
         }

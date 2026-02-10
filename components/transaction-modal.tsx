@@ -6,6 +6,13 @@ import { formatPrice } from "@/lib/data";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
+function generateRandomQRData(): string {
+  const timestamp = Date.now();
+  const random = Math.random().toString(36).substring(2, 15);
+  const qrisId = `${timestamp}-${random}`;
+  return qrisId;
+}
+
 interface TransactionModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -29,10 +36,12 @@ export function TransactionModal({
 }: TransactionModalProps) {
   const [copied, setCopied] = useState(false);
   const [showScrollHint, setShowScrollHint] = useState(false);
+  const [qrisData, setQrisData] = useState<string>("");
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isOpen) {
+      setQrisData(generateRandomQRData());
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
@@ -173,7 +182,7 @@ export function TransactionModal({
               <div className="flex justify-center mb-3">
                 <div className="rounded-xl bg-white p-4">
                   <Image
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=PAYMENT-${transactionId}-${price}`}
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=QRIS-${qrisData}-${transactionId}`}
                     alt="QR Code Payment"
                     width={180}
                     height={180}

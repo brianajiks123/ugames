@@ -61,7 +61,7 @@ export function Header({ onLoginClick, searchQuery, setSearchQuery }: HeaderProp
             <Input
               ref={searchInputRef}
               type="search"
-              placeholder="Cari Game atau Voucher"
+              placeholder="Cari Game"
               className="w-full pl-9"
               value={searchQuery}
               onChange={(e) => setSearchQuery?.(e.target.value)}

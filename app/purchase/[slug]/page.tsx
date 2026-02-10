@@ -7,7 +7,7 @@ import { ArrowLeft, Info, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatPrice, generateTransactionId, paymentMethods } from "@/lib/data";
 import type { PaymentMethod } from "@/lib/data";
-import { fetchGames, Game, Nominal } from "@/lib/game-service";
+import { fetchGames, Game, Nominal, extractNominalValue } from "@/lib/game-service";
 import { TransactionModal } from "@/components/transaction-modal";
 import { UserValidationForm } from "@/components/UserValidationForm";
 import { saveTransactionToLocalStorage } from "@/lib/transaction-storage";
@@ -59,23 +59,23 @@ export default function PurchasePage() {
         idPelanggan: string;
         idServer: string;
     } | null>(null);
+    const [validationStatus, setValidationStatus] = useState<{
+        isValid: boolean;
+        hasError: boolean;
+        isEmpty: boolean;
+    }>({ isValid: false, hasError: false, isEmpty: true });
 
     const isFormValid = useMemo(() => {
-        return selectedNominal !== null && selectedPayment !== null;
-    }, [selectedNominal, selectedPayment]);
+        return selectedNominal !== null && selectedPayment !== null && validationStatus.isValid;
+    }, [selectedNominal, selectedPayment, validationStatus.isValid]);
 
     const handleOrder = () => {
         if (!isFormValid) return;
-        if (!userValidationData) {
-            alert("Silakan validasi User ID dan Server ID terlebih dahulu");
-            return;
-        }
 
         const newTransactionId = generateTransactionId();
 
-        // Extract nominal value from product name ("5 Diamond" -> 5)
-        const nominalMatch = selectedNominal?.name.match(/(\d+)/);
-        const nominalValue = nominalMatch ? parseInt(nominalMatch[1]) : 0;
+        // Extract nominal value from product name with bonus support
+        const nominalValue = extractNominalValue(selectedNominal?.name || "");
 
         // Extract price value (remove "Rp" and formatting)
         const priceValue = selectedNominal?.price || 0;
@@ -84,8 +84,8 @@ export default function PurchasePage() {
 
         try {
             saveTransactionToLocalStorage({
-                idPelanggan: userValidationData.idPelanggan,
-                idServer: userValidationData.idServer,
+                idPelanggan: userValidationData!.idPelanggan,
+                idServer: userValidationData!.idServer,
                 idSv: selectedNominal?.svId || "",
                 kodeProduk: selectedNominal?.kode || "",
                 nominal: nominalValue,
@@ -164,7 +164,7 @@ export default function PurchasePage() {
                         <h2 className="font-semibold text-foreground">Validasi User ID & Server ID</h2>
                     </div>
 
-                    {gameTitle && <UserValidationForm gameTitle={gameTitle} onValidationSuccess={setUserValidationData} />}
+                    {gameTitle && <UserValidationForm gameTitle={gameTitle} onValidationSuccess={setUserValidationData} onValidationStatusChange={setValidationStatus} />}
 
                     <div className="mt-3 flex items-start gap-2 text-xs text-muted-foreground">
                         <Info className="mt-0.5 h-4 w-4 flex-shrink-0" />
@@ -288,8 +288,8 @@ export default function PurchasePage() {
                 isOpen={showTransaction}
                 onClose={() => setShowTransaction(false)}
                 transactionId={transactionId}
-                userId=""
-                serverId=""
+                userId={userValidationData?.idPelanggan || ""}
+                serverId={userValidationData?.idServer || ""}
                 productName={selectedNominal?.name || ""}
                 paymentMethod={selectedPayment?.name || ""}
                 price={selectedNominal?.price || 0}
